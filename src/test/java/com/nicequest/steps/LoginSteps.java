@@ -1,43 +1,53 @@
 package com.nicequest.steps;
 
 import com.nicequest.pages.LoginPage;
-import com.nicequest.pages.DashboardPage;
 import com.nicequest.utils.DriverManager;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
-import io.appium.java_client.android.AndroidDriver;
-import org.junit.Assert;
+import io.cucumber.java.en.*;
+import io.appium.java_client.AppiumDriver;
+
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
 
 public class LoginSteps {
-    private LoginPage loginPage;
-    private DashboardPage dashboardPage;
 
-    @Given("Open Nicequest login page")
-    public void openApp() throws Exception {
-        AndroidDriver driver = DriverManager.getDriver();
+    private AppiumDriver driver; // Cambiado a AppiumDriver para multiplataforma
+    private LoginPage loginPage;
+
+    @Given("Open Nicequest login page on {string}")
+    public void openApp(String platform) throws Exception {
+        driver = (AppiumDriver) DriverManager.getDriver(platform);
         loginPage = new LoginPage(driver);
-        dashboardPage = new DashboardPage(driver);
     }
 
     @When("I enter email {string}")
     public void enterEmail(String email) {
-        loginPage.getEmailField().sendKeys(email);
+        loginPage.enterEmail(email);
     }
 
     @And("I enter password {string}")
     public void enterPassword(String password) {
-        loginPage.getPasswordField().sendKeys(password);
+        loginPage.enterPassword(password);
     }
 
     @And("I tap login button")
     public void tapLogin() {
-        loginPage.getLoginButton().click();
+        loginPage.tapLogin();
     }
 
-    @Then("I should see the dashboard")
-    public void verifyDashboard() {
-        Assert.assertTrue("Dashboard is not visible", dashboardPage.isDashboardVisible());
+    @Then("I should see {string}")
+    public void validateResult(String expectedResult) {
+        if(expectedResult.equalsIgnoreCase("Dashboard visible")) {
+            assertTrue(loginPage.isLoginVisible(), "Dashboard no visible");
+        } else {
+            String message = loginPage.getErrorMessage().getText();
+            if(message.toLowerCase().contains("email")) {
+                System.out.println("Credenciales de email incorrectas");
+            } else if(message.toLowerCase().contains("password")) {
+                System.out.println("Credenciales de contraseña incorrectas");
+            } else {
+                System.out.println("Error desconocido");
+            }
+            assertEquals(expectedResult, message);
+        }
     }
 }

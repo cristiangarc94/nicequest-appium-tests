@@ -1,6 +1,6 @@
 # Nicequest Appium Tests
 
-Este repositorio contiene pruebas automatizadas para la app móvil de **Nicequest**, utilizando **Cucumber + Appium + Java (JUnit)**.  
+Este repositorio contiene pruebas automatizadas para la app móvil de **Nicequest**, utilizando **Cucumber + Appium + Java (TestNG)**.  
 El objetivo es validar los flujos principales de la aplicación mediante escenarios **end-to-end**.
 
 ---
@@ -114,30 +114,29 @@ Nicequest/
 
 ## 🚀 Ejecución de Pruebas
 
-### ✅ QA-01 – Login exitoso
-**Descripción**: Validar el inicio de sesión con credenciales válidas.
-**Archivo**: login.feature
-**Story Points**: 5
+### Escenario: Validar login con múltiples credenciales
+- **Archivo**: login.feature
+- **Descripción**: Validar inicio de sesión con diferentes combinaciones de email y contraseña en Android e iOS.
+- **Story Points**: 5
 ```
-Scenario: Successful login
-  Given Open Nicequest login page
-  When I enter email "user@example.com"
-  And I enter password "ValidPass123"
-  And I tap login button
-  Then I should see the dashboard
-```
+Feature: Login
 
-### ❌ QA-02 – Login inválido (comentado como propuesta futura)
-**Descripción**: Validar mensaje de error con credenciales incorrectas.
-**Story Points**: 3
+  @android @ios
+  Scenario Outline: Validate login with multiple credentials
+    Given I open Nicequest login page on "<platform>"
+    When I login with email "<email>" and password "<password>"
+    Then I should see "<expectedResult>"
+
+    Examples:
+      | platform | email               | password   | expectedResult     |
+      | android  | valid@test.com      | 123456     | Dashboard visible  |
+      | android  | invalid@test.com    | 123456     | Invalid email      |
+      | android  | valid@test.com      | wrongpass  | Invalid password   |
+      | ios      | valid@test.com      | 123456     | Dashboard visible  |
+      | ios      | invalid@test.com    | 123456     | Invalid email      |
+      | ios      | valid@test.com      | wrongpass  | Invalid password   |
 ```
-# Scenario: Invalid login
-#   Given Open Nicequest login page
-#   When I enter email "user@example.com"
-#   And I enter password "wrongPass"
-#   And I tap login button
-#   Then I should see an error message "Invalid email or password"
-```
+Esto permite ejecutar todas las combinaciones de login válidas e inválidas de manera parametrizada.
 
 ## 🛠️ Buenas prácticas aplicadas
 - Page Object Model (POM) → cada pantalla encapsula sus elementos y acciones.

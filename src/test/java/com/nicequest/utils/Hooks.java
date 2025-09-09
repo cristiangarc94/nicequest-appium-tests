@@ -1,19 +1,25 @@
 package com.nicequest.utils;
 
-import io.cucumber.java.AfterStep;
-import io.cucumber.java.Scenario;
-import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumDriver;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 
 public class Hooks {
-    @AfterStep
-    public void takeScreenshotAfterStep(Scenario scenario) {
-        if (scenario.isFailed()) {
-            try {
-                AndroidDriver driver = DriverManager.getDriver();
-                ScreenshotUtil.takeScreenshot(driver, scenario.getName().replaceAll(" ", "_"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
+    private AppiumDriver driver;
+    private String platform = "Android"; // o "iOS", según configuración/test
+
+    @Before
+    public void setup() throws Exception {
+        driver = (AppiumDriver) DriverManager.getDriver(platform);
+    }
+
+    @After
+    public void teardown() {
+        DriverManager.quitDriver(platform);
+    }
+
+    public AppiumDriver getDriver() {
+        return driver;
     }
 }

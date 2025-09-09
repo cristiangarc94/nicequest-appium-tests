@@ -1,37 +1,16 @@
-Feature: Nicequest Login
+Feature: Login
 
-  Scenario: Successful login
-    Given Open Nicequest login page
-    When I enter email "garc6904@gmail.com"
-    And I enter password "Prueba1234"
-    And I tap login button
-    Then I should see the dashboard
+  @android @ios
+  Scenario Outline: Validate login with multiple credentials
+    Given I open Nicequest login page on "<platform>"
+    When I login with email "<email>" and password "<password>"
+    Then I should see "<expectedResult>"
 
-
-# Feature: Nicequest Login - Negative cases
-
-# Scenario: Login fails with empty fields
-#   Given Open Nicequest login page
-#   When I tap login button
-#   Then I should see an error message "Email and password are required"
-
-# Scenario: Login fails with invalid email format
-#   Given Open Nicequest login page
-#   When I enter email "garc6904"
-#   And I enter password "Prueba1234"
-#   And I tap login button
-#   Then I should see an error message "Invalid email format"
-
-# Scenario: Login fails with invalid password
-#   Given Open Nicequest login page
-#   When I enter email "garc6904@gmail.com"
-#   And I enter password "wrongpass"
-#   And I tap login button
-#   Then I should see an error message "Invalid password"
-
-# Scenario: Login fails with wrong credentials
-#   Given Open Nicequest login page
-#   When I enter email "wrong@domain.com"
-#   And I enter password "wrongpass"
-#   And I tap login button
-#   Then I should see an error message "Invalid username or password"
+    Examples:
+      | platform | email               | password   | expectedResult     |
+      | android  | valid@test.com      | 123456     | Dashboard visible  |
+      | android  | invalid@test.com    | 123456     | Invalid email      |
+      | android  | valid@test.com      | wrongpass  | Invalid password   |
+      | ios      | valid@test.com      | 123456     | Dashboard visible  |
+      | ios      | invalid@test.com    | 123456     | Invalid email      |
+      | ios      | valid@test.com      | wrongpass  | Invalid password   |

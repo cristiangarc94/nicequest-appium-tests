@@ -1,16 +1,19 @@
 package com.nicequest.runners;
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
-import org.junit.runner.RunWith;
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.DataProvider;
 
-@RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features",
-        glue = {"com.nicequest.steps", "com.nicequest.utils"},
-        plugin = {"pretty", "html:target/cucumber-report.html"},
-        monochrome = true
+    features = "src/test/resources/features",
+    glue = {"com.nicequest.steps", "com.nicequest.utils"},
+    plugin = {"pretty", "html:target/cucumber-report.html"},
+    monochrome = true
 )
-public class LoginRunner {
-    // No necesita código extra
+public class LoginRunner extends AbstractTestNGCucumberTests {
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
 }
