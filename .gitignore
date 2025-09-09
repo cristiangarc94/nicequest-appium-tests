@@ -1,34 +1,5 @@
-# Maven / Java
-target/
+/target/
+/.idea/
+/*.iml
 *.log
-*.class
-*.jar
-*.war
-*.ear
-*.iml
-
-# IntelliJ IDEA
-.idea/
-*.iml
-out/
-
-# VSCode
-.vscode/
-
-# Appium / Android
-*.apk
-*.keystore
-.gradle/
-local.properties
-*.dex
-*.hprof
-
-# Node / npm (si alguna vez se usa)
-node_modules/
-
-# OS / Sistema
-.DS_Store
-Thumbs.db
-
-# Cucumber / Screenshots
-target/screenshots/
+*.env
