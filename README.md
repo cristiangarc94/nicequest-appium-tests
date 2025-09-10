@@ -76,17 +76,17 @@ src/test/resources/config.properties
 
 Ejemplo:
 
-# Configuración común
+### Configuración común
 appium.server=http://127.0.0.1:4723/
 
-# Android capabilities
+### Android capabilities
 android.deviceName=Android Emulator
 android.platformName=Android
 android.appPackage=com.netquest.pokey
 android.appActivity=com.netquest.pokey.MainActivity
 android.noReset=true
 
-# iOS capabilities
+### iOS capabilities
 ios.deviceName=iPhone Simulator
 ios.platformName=iOS
 ios.bundleId=com.netquest.pokey
