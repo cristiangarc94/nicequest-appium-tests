@@ -7,10 +7,12 @@ import io.cucumber.java.Before;
 public class Hooks {
 
     private AppiumDriver driver;
-    private String platform = "Android"; // o "iOS", según configuración/test
+    private String platform;
 
     @Before
     public void setup() throws Exception {
+        // Si no se pasa -Dplatform, por defecto usa Android
+        platform = System.getProperty("platform", "Android");
         driver = (AppiumDriver) DriverManager.getDriver(platform);
     }
 

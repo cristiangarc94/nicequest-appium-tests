@@ -11,8 +11,9 @@ public class DriverManager {
     private static AndroidDriver androidDriver;
     private static IOSDriver iosDriver;
 
-    // Devuelve driver según plataforma
     public static Object getDriver(String platform) throws Exception {
+        String serverUrl = ConfigReader.get("appium.server");
+
         if(platform.equalsIgnoreCase("Android")) {
             if(androidDriver == null) {
                 // ===============================================
@@ -22,25 +23,25 @@ public class DriverManager {
                 // ===============================================
 
                 UiAutomator2Options options = new UiAutomator2Options()
-                        .setDeviceName("Android Emulator")
-                        .setPlatformName("Android")
-                        .setAppPackage("com.netquest.pokey")
-                        .setAppActivity("com.netquest.pokey.MainActivity")
-                        .setNoReset(true);
+                        .setDeviceName(ConfigReader.get("android.deviceName"))
+                        .setPlatformName(ConfigReader.get("android.platformName"))
+                        .setAppPackage(ConfigReader.get("android.appPackage"))
+                        .setAppActivity(ConfigReader.get("android.appActivity"))
+                        .setNoReset(Boolean.parseBoolean(ConfigReader.get("android.noReset")));
 
-                androidDriver = new AndroidDriver(new URL("http://127.0.0.1:4723/"), options);
+                androidDriver = new AndroidDriver(new URL(serverUrl), options);
             }
             return androidDriver;
 
         } else if(platform.equalsIgnoreCase("iOS")) {
             if(iosDriver == null) {
                 XCUITestOptions options = new XCUITestOptions()
-                        .setDeviceName("iPhone Simulator")
-                        .setPlatformName("iOS")
-                        .setBundleId("com.netquest.pokey")
-                        .setNoReset(true);
+                        .setDeviceName(ConfigReader.get("ios.deviceName"))
+                        .setPlatformName(ConfigReader.get("ios.platformName"))
+                        .setBundleId(ConfigReader.get("ios.bundleId"))
+                        .setNoReset(Boolean.parseBoolean(ConfigReader.get("ios.noReset")));
 
-                iosDriver = new IOSDriver(new URL("http://127.0.0.1:4723/"), options);
+                iosDriver = new IOSDriver(new URL(serverUrl), options);
             }
             return iosDriver;
         }
@@ -62,7 +63,6 @@ public class DriverManager {
         }
     }
 
-    // Sobrecarga para Android por defecto
     public static AndroidDriver getDriver() throws Exception {
         return (AndroidDriver) getDriver("Android");
     }

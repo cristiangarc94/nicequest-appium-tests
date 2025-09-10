@@ -30,6 +30,8 @@ Instalar dependencias (Maven lo hace automáticamente al correr los tests):
 mvn clean install
 ```
 
+---
+
 ## 🔧 Configuración
 ### 1️. Emulador Android
 Debes tener configurado un AVD en Android Studio.
@@ -65,8 +67,50 @@ Este archivo ya está incluido en el proyecto, pero asegúrate de que contiene:
 ```  
 Esto evitará que se suban dependencias innecesarias y credenciales sensibles.
 
+### 4️. Archivo de configuración `config.properties`
+
+Las Appium capabilities están externalizadas en:
+```
+src/test/resources/config.properties
+```
+
+Ejemplo:
+
+# Configuración común
+appium.server=http://127.0.0.1:4723/
+
+# Android capabilities
+android.deviceName=Android Emulator
+android.platformName=Android
+android.appPackage=com.netquest.pokey
+android.appActivity=com.netquest.pokey.MainActivity
+android.noReset=true
+
+# iOS capabilities
+ios.deviceName=iPhone Simulator
+ios.platformName=iOS
+ios.bundleId=com.netquest.pokey
+ios.noReset=true
+
+---
+
 ## 🚀 Ejecución de Pruebas
-### Opción 1: Modo rápido (recomendado)
+### 1. Selección de plataforma
+La plataforma se pasa como parámetro Maven:
+
+Android:
+```
+mvn test -Dplatform=Android
+```
+
+iOS:
+```
+mvn test -Dplatform=iOS
+```
+
+Si no se especifica, el valor por defecto es Android.
+
+### 2. Modo rápido (recomendado)
 Arranca el emulador manualmente:
 ```
 emulator -avd Medium_Phone_API_35
@@ -80,7 +124,7 @@ Ejecuta los tests:
 mvn test
 ```
 
-### Opción 2: Modo demo (arranque automático)
+### 3. Modo demo (arranque automático)
 En DriverManager está comentado el código para arrancar emulador y Appium desde Java:
 ```
 /*
@@ -90,11 +134,13 @@ AppiumManager.startAppium();
 ```
 👉 Útil en CI/CD o entornos donde quieras que todo sea automático.
 
+
 ## 📁 Estructura del Proyecto
 ```
 Nicequest/
 ├── pom.xml
 ├── src/main/java/com/nicequest/utils/
+│   ├── ConfigReader.java         # Lee config.properties
 │   ├── DriverManager.java        # Configuración central del driver
 │   ├── EmulatorManager.java      # Opcional (arranque automático de AVD)
 │   ├── AppiumManager.java        # Opcional (arranque automático de Appium)
@@ -107,9 +153,11 @@ Nicequest/
 ├── src/test/java/com/nicequest/utils/
 │   └── Hooks.java                # Hooks de Cucumber (before/after, screenshots)
 ├── src/test/java/com/nicequest/runners/
-│   └── LoginRunner.java          # Runner de Cucumber (JUnit)
-└── src/test/resources/features/
-    └── login.feature             # Escenarios en Gherkin
+│   └── LoginRunner.java          # Runner de Cucumber (JUnit/TestNG)
+└── src/test/resources/
+    ├── config.properties         # Configuración de capabilities
+    └── features/
+        └── login.feature         # Escenarios en Gherkin
 ```
 
 ## 🚀 Ejecución de Pruebas
@@ -140,9 +188,11 @@ Esto permite ejecutar todas las combinaciones de login válidas e inválidas de 
 
 ## 🛠️ Buenas prácticas aplicadas
 - Page Object Model (POM) → cada pantalla encapsula sus elementos y acciones.
-- DriverManager → centraliza la configuración del driver (modo rápido y demo).
-- Hooks + ScreenshotUtil → captura de pantallas automáticas al fallar los tests.
-- Waits explícitos → se espera a que los elementos sean visibles/clicables antes de interactuar.
+- DriverManager + ConfigReader → centralizan y externalizan configuración del driver.
+- Hooks + ScreenshotUtil → capturas automáticas en caso de fallo.
+- Scenarios parametrizados → Scenario Outline + Examples para evitar duplicación.
+- Tags en Gherkin → permiten ejecutar subsets (@positive, @negative, @android, @ios).
+- Waits explícitos → sincronización estable antes de interactuar con elementos.
 
 ## 🔮 Futuras mejoras
 - CI/CD: integración con GitHub Actions / Jenkins.
@@ -152,7 +202,7 @@ Esto permite ejecutar todas las combinaciones de login válidas e inválidas de 
 
 ## 📑 Conclusión
 Este proyecto demuestra:
-- Un diseño robusto y escalable con POM + DriverManager.
-- Ejecución flexible en modo rápido y modo demo.
-- Escenarios positivos y negativos documentados en Gherkin
+- Un diseño robusto y escalable con POM + DriverManager + ConfigReader.
+- Ejecución flexible por plataforma con mvn test -Dplatform=Android|iOS.
+- Escenarios positivos y negativos documentados en Gherkin.
 - Base preparada para CI/CD, paralelización y cross-platform.
