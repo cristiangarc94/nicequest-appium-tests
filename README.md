@@ -169,20 +169,38 @@ Nicequest/
 ```
 Feature: Login
 
-  @android @ios
-  Scenario Outline: Validate login with multiple credentials
-    Given I open Nicequest login page on "<platform>"
-    When I login with email "<email>" and password "<password>"
-    Then I should see "<expectedResult>"
+  @positive @android @ios
+  Scenario Outline: Successful login with valid credentials
+    Given Open Nicequest login page on "<platform>"
+    When I enter email "<email>"
+    And I enter password "<password>"
+    And I tap login button
+    Then I should see "Dashboard visible"
 
     Examples:
-      | platform | email               | password   | expectedResult     |
-      | android  | valid@test.com      | 123456     | Dashboard visible  |
-      | android  | invalid@test.com    | 123456     | Invalid email      |
-      | android  | valid@test.com      | wrongpass  | Invalid password   |
-      | ios      | valid@test.com      | 123456     | Dashboard visible  |
-      | ios      | invalid@test.com    | 123456     | Invalid email      |
-      | ios      | valid@test.com      | wrongpass  | Invalid password   |
+      | platform | email              | password   |
+      | Android  | valid.user@test.com | correct123 |
+      | iOS      | valid.user@test.com | correct123 |
+
+  @negative
+  Scenario Outline: Login with invalid credentials
+    Given Open Nicequest login page on "<platform>"
+    When I enter email "<email>"
+    And I enter password "<password>"
+    And I tap login button
+    Then I should see "<expectedMessage>"
+
+    Examples:
+      | platform | email               | password   | expectedMessage       |
+      | Android  | bademail.com        | correct123 | Invalid email format  |
+      | iOS      | bademail.com        | correct123 | Invalid email format  |
+      | Android  | valid.user@test.com | wrongpass1 | Incorrect password    |
+      | iOS      | valid.user@test.com | wrongpass1 | Incorrect password    |
+      | Android  |                     |            | Email is required     |
+      | iOS      |                     |            | Email is required     |
+      | Android  | user@test.com       |            | Password is required  |
+      | iOS      | user@test.com       |            | Password is required  |
+
 ```
 Esto permite ejecutar todas las combinaciones de login válidas e inválidas de manera parametrizada.
 
